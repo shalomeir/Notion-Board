@@ -95,13 +95,20 @@ class NotionAdapter extends NotionClient {
         this.database_id = database_id;
     }
     async createPage(issue) {
-        logger_1.logger.info('Commensing new Page creation');
-        await this._client.pages.create({
-            parent: {
-                database_id: this.database_id
-            },
-            properties: this.prepareNotionProperty(issue)
-        });
+        logger_1.logger.info(`Creating page for issue #${issue.id()} in database ${this.database_id}`);
+        try {
+            await this._client.pages.create({
+                parent: {
+                    database_id: this.database_id
+                },
+                properties: this.prepareNotionProperty(issue)
+            });
+            logger_1.logger.info(`Successfully created page for issue #${issue.id()}`);
+        }
+        catch (error) {
+            logger_1.logger.error(`Failed to create page for issue #${issue.id()}: ${error}`);
+            throw error;
+        }
         await this.sleep();
     }
     async updatePage(id, issue) {

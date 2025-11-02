@@ -18,13 +18,19 @@ export class NotionAdapter extends NotionClient {
     }
 
     async createPage(issue: Issue) {
-        logger.info('Commensing new Page creation')
-        await this._client.pages.create({
-            parent: {
-                database_id: this.database_id
-            },
-            properties: this.prepareNotionProperty(issue)
-        })
+        logger.info(`Creating page for issue #${issue.id()} in database ${this.database_id}`)
+        try {
+            await this._client.pages.create({
+                parent: {
+                    database_id: this.database_id
+                },
+                properties: this.prepareNotionProperty(issue)
+            })
+            logger.info(`Successfully created page for issue #${issue.id()}`)
+        } catch (error) {
+            logger.error(`Failed to create page for issue #${issue.id()}: ${error}`)
+            throw error
+        }
         await this.sleep();
     }
 
