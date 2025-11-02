@@ -108,27 +108,34 @@ export class NotionAdapter extends NotionClient {
     }
 
     async setup(){
-        await this._client.databases.update({
-            database_id: this.database_id,
-            properties: {
-                ID: {
-                    number : {}
-                },
-                State: {
-                    select: {
-                        options: [
-                            {name: 'open', color: 'green'},
-                            {name: 'close', color: 'red'}
-                        ]
+        console.log(`Setting up database ${this.database_id} with properties...`);
+        try {
+            await this._client.databases.update({
+                database_id: this.database_id,
+                properties: {
+                    ID: {
+                        number : {}
+                    },
+                    State: {
+                        select: {
+                            options: [
+                                {name: 'open', color: 'green'},
+                                {name: 'close', color: 'red'}
+                            ]
+                        }
+                    },
+                    URL: {
+                        url: {}
+                    },
+                    Label: {
+                        multi_select: {}
                     }
-                },
-                URL: {
-                    url: {}
-                },
-                Label: {
-                    multi_select: {}
                 }
-            }
-        })
+            });
+            console.log(`Successfully set up database ${this.database_id}`);
+        } catch (error) {
+            console.error(`Failed to setup database ${this.database_id}: ${error}`);
+            throw error;
+        }
     }
 }
