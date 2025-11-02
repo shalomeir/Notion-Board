@@ -61,17 +61,24 @@ export class NotionAdapter extends NotionClient {
     }
 
     async findPage(id: number) {
-        const pages = await this._client.databases.query({
-            database_id: this.database_id,
-            filter: {
-                property: 'ID',
-                number: {
-                    equals: id
+        try {
+            console.log(`Searching for existing page with issue ID: ${id} in database ${this.database_id}`);
+            const pages = await this._client.databases.query({
+                database_id: this.database_id,
+                filter: {
+                    property: 'ID',
+                    number: {
+                        equals: id
+                    }
                 }
-            }
-        });
-        const page = pages.results[0];
-        return page ? page.id : false;
+            });
+            const page = pages.results[0];
+            console.log(`Query result: found ${pages.results.length} pages for issue ID ${id}`);
+            return page ? page.id : false;
+        } catch (error) {
+            console.error(`Failed to query database for issue ID ${id}: ${error}`);
+            throw error;
+        }
     }
 
     sleep(ms: number = 1000) {

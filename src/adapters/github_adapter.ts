@@ -15,19 +15,28 @@ export class GithubAdapter {
     }
 
     async fetchAllIssues(token: string) {
-        const owner = github.context.repo.owner;
-        const repo = github.context.repo.repo;
-        console.log(`Fetching issues from: ${owner}/${repo}`);
+        try {
+            const owner = github.context.repo.owner;
+            const repo = github.context.repo.repo;
+            console.log(`Fetching issues from: ${owner}/${repo}`);
 
-        const octokit = github.getOctokit(token);
-        const issues: Array<Issue> = await octokit.paginate('GET /repos/{owner}/{repo}/issues', {
-            owner: owner,
-            repo: repo,
-            per_page: 100,
-            state: this.prepareIssueType()
-        }, response => response.data.map(issue => new Issue(issue)));
-        console.log(`Found ${issues.length} issues to sync`);
-        return issues;
+            const octokit = github.getOctokit(token);
+            console.log(`Created octokit client, making API call...`);
+
+            const issues: Array<Issue> = await octokit.paginate('GET /repos/{owner}/{repo}/issues', {
+                owner: owner,
+                repo: repo,
+                per_page: 100,
+                state: this.prepareIssueType()
+            }, response => response.data.map(issue => new Issue(issue)));
+
+            console.log(`Successfully fetched ${issues.length} issues to sync`);
+            return issues;
+        } catch (error) {
+            console.error(`Failed to fetch issues from GitHub: ${error}`);
+            console.error(`Error details:`, error);
+            throw error;
+        }
     }
 
     private prepareIssueType() {

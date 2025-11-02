@@ -43,18 +43,26 @@ class GithubAdapter {
         return new issue_1.Issue(github.context.payload.issue);
     }
     async fetchAllIssues(token) {
-        const owner = github.context.repo.owner;
-        const repo = github.context.repo.repo;
-        console.log(`Fetching issues from: ${owner}/${repo}`);
-        const octokit = github.getOctokit(token);
-        const issues = await octokit.paginate('GET /repos/{owner}/{repo}/issues', {
-            owner: owner,
-            repo: repo,
-            per_page: 100,
-            state: this.prepareIssueType()
-        }, response => response.data.map(issue => new issue_1.Issue(issue)));
-        console.log(`Found ${issues.length} issues to sync`);
-        return issues;
+        try {
+            const owner = github.context.repo.owner;
+            const repo = github.context.repo.repo;
+            console.log(`Fetching issues from: ${owner}/${repo}`);
+            const octokit = github.getOctokit(token);
+            console.log(`Created octokit client, making API call...`);
+            const issues = await octokit.paginate('GET /repos/{owner}/{repo}/issues', {
+                owner: owner,
+                repo: repo,
+                per_page: 100,
+                state: this.prepareIssueType()
+            }, response => response.data.map(issue => new issue_1.Issue(issue)));
+            console.log(`Successfully fetched ${issues.length} issues to sync`);
+            return issues;
+        }
+        catch (error) {
+            console.error(`Failed to fetch issues from GitHub: ${error}`);
+            console.error(`Error details:`, error);
+            throw error;
+        }
     }
     prepareIssueType() {
         if (this.issueType === 'all') {
@@ -134,17 +142,25 @@ class NotionAdapter extends NotionClient {
         await this.sleep();
     }
     async findPage(id) {
-        const pages = await this._client.databases.query({
-            database_id: this.database_id,
-            filter: {
-                property: 'ID',
-                number: {
-                    equals: id
+        try {
+            console.log(`Searching for existing page with issue ID: ${id} in database ${this.database_id}`);
+            const pages = await this._client.databases.query({
+                database_id: this.database_id,
+                filter: {
+                    property: 'ID',
+                    number: {
+                        equals: id
+                    }
                 }
-            }
-        });
-        const page = pages.results[0];
-        return page ? page.id : false;
+            });
+            const page = pages.results[0];
+            console.log(`Query result: found ${pages.results.length} pages for issue ID ${id}`);
+            return page ? page.id : false;
+        }
+        catch (error) {
+            console.error(`Failed to query database for issue ID ${id}: ${error}`);
+            throw error;
+        }
     }
     sleep(ms = 1000) {
         return new Promise(resolve => setTimeout(resolve, ms));
@@ -247,21 +263,36 @@ class App {
     async syncIssues() {
         logger_1.logger.info('Fetching all Issuess');
         const issues = await this.githubAdapter.fetchAllIssues(this.GitHubToken);
-        for (const issue of issues) {
+        console.log(`Starting to process ${issues.length} issues...`);
+        for (let i = 0; i < issues.length; i++) {
+            const issue = issues[i];
+            console.log(`Processing issue ${i + 1}/${issues.length}: #${issue.id()} - ${issue.title()}`);
             let pageId;
             try {
                 pageId = await this.notionAdapter.findPage(issue.id());
+                console.log(`Found existing page for issue #${issue.id()}: ${pageId}`);
             }
             catch (error) {
-                console.log(error);
+                console.log(`Error finding page for issue #${issue.id()}: ${error}`);
+                pageId = null;
             }
-            if (pageId) {
-                this.notionAdapter.updatePage(issue.id(), issue);
+            try {
+                if (pageId) {
+                    console.log(`Updating existing page for issue #${issue.id()}`);
+                    await this.notionAdapter.updatePage(issue.id(), issue);
+                }
+                else {
+                    console.log(`Creating new page for issue #${issue.id()}`);
+                    await this.notionAdapter.createPage(issue);
+                }
+                console.log(`Successfully processed issue #${issue.id()}`);
             }
-            else {
-                this.notionAdapter.createPage(issue);
+            catch (error) {
+                console.error(`Failed to process issue #${issue.id()}: ${error}`);
+                // Continue with next issue instead of stopping
             }
         }
+        console.log(`Finished processing ${issues.length} issues`);
     }
 }
 exports.App = App;

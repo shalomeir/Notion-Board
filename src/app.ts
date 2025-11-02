@@ -45,19 +45,37 @@ export class App {
         logger.info('Fetching all Issuess');
         const issues = await this.githubAdapter.fetchAllIssues(this.GitHubToken);
 
-        for (const issue of issues) {
+        console.log(`Starting to process ${issues.length} issues...`);
+
+        for (let i = 0; i < issues.length; i++) {
+            const issue = issues[i];
+            console.log(`Processing issue ${i + 1}/${issues.length}: #${issue.id()} - ${issue.title()}`);
+
             let pageId;
             try {
                 pageId = await this.notionAdapter.findPage(issue.id());
+                console.log(`Found existing page for issue #${issue.id()}: ${pageId}`);
             } catch (error) {
-                console.log(error);
+                console.log(`Error finding page for issue #${issue.id()}: ${error}`);
+                pageId = null;
             }
-            if (pageId) {
-                this.notionAdapter.updatePage(issue.id(), issue);
-            } else {
-                this.notionAdapter.createPage(issue);
+
+            try {
+                if (pageId) {
+                    console.log(`Updating existing page for issue #${issue.id()}`);
+                    await this.notionAdapter.updatePage(issue.id(), issue);
+                } else {
+                    console.log(`Creating new page for issue #${issue.id()}`);
+                    await this.notionAdapter.createPage(issue);
+                }
+                console.log(`Successfully processed issue #${issue.id()}`);
+            } catch (error) {
+                console.error(`Failed to process issue #${issue.id()}: ${error}`);
+                // Continue with next issue instead of stopping
             }
         }
+
+        console.log(`Finished processing ${issues.length} issues`);
     }
 
 }
