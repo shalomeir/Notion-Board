@@ -144,6 +144,15 @@ class NotionAdapter extends NotionClient {
     async findPage(id) {
         try {
             console.log(`Searching for existing page with issue ID: ${id} in database ${this.database_id}`);
+            // First try a simple query without filter to test basic access
+            console.log(`Testing basic database access...`);
+            const testQuery = await this._client.databases.query({
+                database_id: this.database_id,
+                page_size: 1
+            });
+            console.log(`Basic query successful, database contains ${testQuery.results.length} pages`);
+            // Now try with filter
+            console.log(`Attempting filtered query for ID: ${id}`);
             const pages = await this._client.databases.query({
                 database_id: this.database_id,
                 filter: {
@@ -154,11 +163,12 @@ class NotionAdapter extends NotionClient {
                 }
             });
             const page = pages.results[0];
-            console.log(`Query result: found ${pages.results.length} pages for issue ID ${id}`);
+            console.log(`Filtered query result: found ${pages.results.length} pages for issue ID ${id}`);
             return page ? page.id : false;
         }
         catch (error) {
             console.error(`Failed to query database for issue ID ${id}: ${error}`);
+            console.error(`Error details:`, JSON.stringify(error, null, 2));
             throw error;
         }
     }
