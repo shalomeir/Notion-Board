@@ -1,29 +1,33 @@
 name: 'Notion Board'
-author: Souvik De
-description: 'Sync your github issues with notion database'
+author: 'shalomeir'
+description: 'Sync your GitHub issues with Notion database automatically'
 branding:
-  color: gray-dark
-  icon: disc
+  color: 'blue'
+  icon: 'database'
 inputs:
-  GITHUB_TOKEN:
-    description: 'your GitHub token'
+  token:
+    description: 'GitHub token with repo access permissions'
     required: true
   NOTION_API_KEY:
-    description: 'Your notion API Key'
-    requried: true
+    description: 'Notion integration API key with database access'
+    required: true
   NOTION_DATABASE:
-    description: 'Your Notion Database ID'
-    requried: true
+    description: 'Notion database ID where issues will be synced'
+    required: true
   setup:
+    description: 'Setup required database properties in Notion'
     required: false
     type: boolean
   syncIssues:
-    requried: false
+    description: 'Sync all existing issues from GitHub'
+    required: false
     type: boolean
   issueType:
-    requried: false
+    description: 'Type of issues to sync (all, open, closed)'
+    required: false
     type: string
+    default: 'open'
   
 runs:
-  using: node12
+  using: 'node16'
   main: dist/index.js

@@ -37,7 +37,7 @@ on:
   workflow_dispatch:
     inputs:
       setup:
-        description: 'Populate your notion database with all the requried properties'
+        description: 'Populate your notion database with all the required properties'
         type: boolean
       syncIssues:
         description: 'sync all other existing issues in this repo'
@@ -93,7 +93,7 @@ https://www.notion.so/myworkspace/a8aec43384f447ed84390e8e42c2e089?v=...
 <img src="./screenshots/sidebar.png" width="400" />
 
 ### Setting up Notion Database Properties 
-Now that you have successfully completed setting up GitHub side of things you have to add some requried [notion properties](https://www.notion.so/help/guides/database-properties-help-organize-your-teams-information) for **Notion-Board** to run properly. 
+Now that you have successfully completed setting up GitHub side of things you have to add some required [notion properties](https://www.notion.so/help/guides/database-properties-help-organize-your-teams-information) for **Notion-Board** to run properly. 
 
 **Notion Properties** 
 |Property| Type|
@@ -108,7 +108,7 @@ You can also use the notion `workflow_dispatch` to automatically setup your noti
 - Just head over to the `actions` tab and go to `Notion Board` workflow
 - click the `Run workflow` button and select the first option that you see. 
 <img src="./screenshots/run_workflow.png" width="400" />
-- This will create the requried properties in your notion database. 
+- This will create the required properties in your notion database. 
 
 ### Sync Your Existing Issues
 If you are adding **Notion-Board** to project that already has some existing issue, you have to set them up manually. All you have to do is run the `workflow` with `sync all other existing issues in this repo` checked. 
@@ -139,7 +139,7 @@ This project is build using [typescript](https://www.typescriptlang.org/) so you
 In order to contribute to this project, you should:
 
 1. Clone this repository from your fork 
-2. Run `npm install` in the project directory to install all the requried dependencies. (You have to have npm on your system, if you have nodejs you most probably have npm installed as well)
+2. Run `npm install` in the project directory to install all the required dependencies. (You have to have npm on your system, if you have nodejs you most probably have npm installed as well)
 3. Create a new branch with a meaningful name. 
 4. Develop a new feature or fix a bug you want. 
 5. Open a pull request to the `main` branch

@@ -31,6 +31,8 @@ export const run = async () => {
 run()
     .then(() => { })
     .catch(err => {
-        console.log("ERROR", err);
-        core.setFailed(err.message);
+        // Log error message only, avoiding potential sensitive information
+        const errorMessage = err instanceof Error ? err.message : String(err);
+        console.log("ERROR:", errorMessage);
+        core.setFailed(errorMessage);
     })
