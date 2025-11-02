@@ -56,7 +56,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - name: Notion Board
-        uses: shalomeir/Notion-Board@v1.0.0
+        uses: shalomeir/Notion-Board@v1.2.0
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           NOTION_API_KEY: ${{ secrets.NOTION_API_KEY }}
