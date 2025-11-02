@@ -15,20 +15,27 @@ export class NotionAdapter extends NotionClient {
         private readonly database_id: string
     ) {
         super(api_key);
+        console.log(`NotionAdapter initialized with database_id: ${this.database_id}`);
     }
 
     async createPage(issue: Issue) {
         logger.info(`Creating page for issue #${issue.id()} in database ${this.database_id}`)
         try {
-            await this._client.pages.create({
+            // First check if we can access the database
+            console.log(`Checking database access for ID: ${this.database_id}`)
+            await this._client.databases.retrieve({ database_id: this.database_id })
+            console.log(`Database access confirmed for ID: ${this.database_id}`)
+
+            const result = await this._client.pages.create({
                 parent: {
                     database_id: this.database_id
                 },
                 properties: this.prepareNotionProperty(issue)
             })
-            logger.info(`Successfully created page for issue #${issue.id()}`)
+            logger.info(`Successfully created page for issue #${issue.id()}: ${result.id}`)
         } catch (error) {
             logger.error(`Failed to create page for issue #${issue.id()}: ${error}`)
+            console.error(`Full error details:`, error)
             throw error
         }
         await this.sleep();
