@@ -8,6 +8,13 @@ const EventName = process.env.GITHUB_EVENT_NAME;
 const NotionApiKey = process.env.NOTION_API_KEY || core.getInput('NOTION_API_KEY');
 const NotionDatabaseId = process.env.NOTION_DATABASE || core.getInput('NOTION_DATABASE');
 
+console.log('=== Configuration Check ===');
+console.log(`GitHub Token: ${Token ? 'Set (length: ' + Token.length + ')' : 'Not set'}`);
+console.log(`Notion API Key: ${NotionApiKey ? 'Set (length: ' + NotionApiKey.length + ')' : 'Not set'}`);
+console.log(`Notion Database ID: ${NotionDatabaseId || 'Not set'}`);
+console.log(`Event Name: ${EventName}`);
+console.log('===========================');
+
 export const run = async () => {
     if (!Token) throw new Error("Missing GitHub token");
     if (!NotionApiKey) throw new Error('Missing Notion Api Key');
