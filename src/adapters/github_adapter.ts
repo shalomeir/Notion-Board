@@ -15,13 +15,18 @@ export class GithubAdapter {
     }
 
     async fetchAllIssues(token: string) {
+        const owner = github.context.repo.owner;
+        const repo = github.context.repo.repo;
+        console.log(`Fetching issues from: ${owner}/${repo}`);
+
         const octokit = github.getOctokit(token);
         const issues: Array<Issue> = await octokit.paginate('GET /repos/{owner}/{repo}/issues', {
-            owner: github.context.repo.owner,
-            repo: github.context.repo.repo,
+            owner: owner,
+            repo: repo,
             per_page: 100,
             state: this.prepareIssueType()
         }, response => response.data.map(issue => new Issue(issue)));
+        console.log(`Found ${issues.length} issues to sync`);
         return issues;
     }
 
