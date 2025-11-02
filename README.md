@@ -4,9 +4,9 @@
 
 **Notion-Board** brings Notion and GitHub closer than before. Notion-board lets you sync your GitHub Issues with notion database, so whenever a new issue is opened or existing issue is updated in GitHub it syncs your notion database accordingly. 
 
-> Currently **Notion-Board** syncs issue title, lables and state. In future we are going to support more features so stay tuned. 
+> Currently **Notion-Board** syncs issue title, labels and state. This is a fork of the original [Souvikns/Notion-Board](https://github.com/Souvikns/Notion-Board) repository with additional security improvements and marketplace-ready updates.
 
-You can try it out by opening a new issue in this repository and see it get synced in this [Notion Database](https://souvikns.notion.site/64bc98b98e6242c9bbc1cbedf9c93261?v=621cc0ced4614c56831a21f8cf974674). 
+You can try it out by opening a new issue in your repository where you set up this action and see it get synced in your Notion database. 
 
 ## Table of Contents 
 - [Setup Guide](#setup-guide)
@@ -56,15 +56,14 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - name: Notion Board
-        uses: Souvikns/Notion-Board@2.2.0
+        uses: shalomeir/Notion-Board@v1.0.0
         with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          NOTION_API_KEY: ${{ secrets.NOTION_API_KEY }}
+          NOTION_DATABASE: ${{ secrets.NOTION_DATABASE }}
           setup: ${{github.event.inputs.setup}}
           syncIssues: ${{github.event.inputs.syncIssues}}
           issueType: ${{github.event.inputs.issueType}}
-        env: 
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          NOTION_API_KEY: ${{ secrets.NOTION_API_KEY }}
-          NOTION_DATABASE: ${{ secrets.NOTION_DATABASE }}
           
 ```
 

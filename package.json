@@ -10,20 +10,22 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/Souvikns/Notion-Board.git"
+    "url": "git+https://github.com/shalomeir/Notion-Board.git"
   },
   "keywords": [
-    "github actions"
+    "github actions",
+    "notion",
+    "github-issues",
+    "automation"
   ],
   "author": {
-    "name": "Souvik De",
-    "email": "souvikde.ns@gmail.com"
+    "name": "shalomeir"
   },
-  "license": "ISC",
+  "license": "Apache-2.0",
   "bugs": {
-    "url": "https://github.com/Souvikns/Notion-Board/issues"
+    "url": "https://github.com/shalomeir/Notion-Board/issues"
   },
-  "homepage": "https://github.com/Souvikns/Notion-Board#readme",
+  "homepage": "https://github.com/shalomeir/Notion-Board#readme",
   "devDependencies": {
     "@types/jest": "^27.0.1",
     "@vercel/ncc": "^0.38.4",
